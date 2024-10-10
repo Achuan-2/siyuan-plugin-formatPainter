@@ -6,5 +6,5 @@ dist
 package.zip
 index.css
 index.js
-i18n
+/i18n
 release.sh
