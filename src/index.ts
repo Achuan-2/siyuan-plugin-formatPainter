@@ -58,11 +58,15 @@ export default class PluginSample extends Plugin {
                                     datatype: selectedInfo.datatype,
                                     style: selectedInfo.style
                                 };
-                                this.formatPainterEnable = true;
-                                // console.log(this.formatData);
-                                fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
-                            }
 
+                            }
+                            else {
+                                this.formatData = null;
+                                // console.log("选中无样式文字");
+                            }
+                            this.formatPainterEnable = true;
+                            console.log(this.formatData);
+                            fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
                         }
                     }
                 }
@@ -75,20 +79,27 @@ export default class PluginSample extends Plugin {
 
         // });
         document.addEventListener('mouseup', (event) => {
-            if (this.formatPainterEnable && this.formatData) {
+            if (this.formatPainterEnable) {
                 const selection = window.getSelection();
                 if (selection && selection.rangeCount > 0) {
                     const range = selection.getRangeAt(0);
                     const selectedText = range.toString();
                     if (selectedText) {
+
                         this.protyle.toolbar.range = range;  // 更改选区
                         // console.log(this.protyle.toolbar.range.toString());
                         // Apply the stored format to the selected text
+                        // 如果都为空
+                        if (!this.formatData) {
+                            this.protyle.toolbar.setInlineMark(this.protyle, "clear", "range");
+                            selection.removeAllRanges();
+                            return;
+                        }
                         if (this.formatData.datatype) {
                             this.protyle.toolbar.setInlineMark(this.protyle, this.formatData.datatype, "range");
                         }
                         if (this.formatData.style) {
-                            console.log(this.formatData.style);
+                            // console.log(this.formatData.style);
                             // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", { "type": "style1", "color": this.formatData.style });
                             const { backgroundColor, color } = parseStyle(this.formatData.style);
 
@@ -106,6 +117,7 @@ export default class PluginSample extends Plugin {
                                 });
                             }
                         }
+
                         // console.log("Format applied to selected text");
                         // 清空选区
                         selection.removeAllRanges();
@@ -128,10 +140,12 @@ export default class PluginSample extends Plugin {
             };
         }
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                this.formatPainterEnable = false;
-                this.formatData = null;
-                fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
+            if (event.key === "Escape") {
+                if (this.formatPainterEnable) {
+                    this.formatPainterEnable = false;
+                    this.formatData = null;
+                    fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
+                }
             }
         });
 
@@ -148,7 +162,7 @@ export default class PluginSample extends Plugin {
             while (parentElement && !parentElement.hasAttribute("data-type")) {
                 parentElement = parentElement.parentElement;
             }
-            if (parentElement) {
+            if (parentElement.tagName.toLowerCase() === "span") {
                 const result = {
                     html: parentElement.outerHTML,
                     datatype: parentElement.getAttribute("data-type"),
