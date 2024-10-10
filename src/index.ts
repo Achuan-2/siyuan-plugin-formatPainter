@@ -8,7 +8,7 @@ import {
     IProtyle,
     Toolbar
 } from "siyuan";
-import "./index.scss";
+
 
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
@@ -64,8 +64,24 @@ export default class PluginSample extends Plugin {
                                 // console.log("选中无样式文字");
                             }
                             this.formatPainterEnable = true;
+                            document.body.dataset.formatPainterEnable ="true";
                             // console.log(this.formatData);
                             fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+                            this.protyle.toolbar.range.collapse(true);
+                            // 关闭toolbar
+                            // 选择所有具有 .protyle-toolbar 类的元素
+                            const toolbarElements = document.querySelectorAll('.protyle-toolbar');
+
+                            // 遍历选中的元素
+                            toolbarElements.forEach(element => {
+                                // 检查元素是否没有 .fn__none 类
+                                if (!element.classList.contains('fn__none')) {
+                                    // 如果没有 .fn__none 类，则添加它
+                                    element.classList.add('fn__none');
+                                }
+                            });
+
+
                         }
                     }
                 }
@@ -89,11 +105,7 @@ export default class PluginSample extends Plugin {
                         // console.log(this.protyle.toolbar.range.toString());
                         // Apply the stored format to the selected text
                         // 如果都为空
-                        if (!this.formatData) {
-                            this.protyle.toolbar.setInlineMark(this.protyle, "clear", "range");
-                            selection.removeAllRanges();
-                            return;
-                        }
+                        this.protyle.toolbar.setInlineMark(this.protyle, "clear", "range");
                         if (this.formatData.datatype) {
                             this.protyle.toolbar.setInlineMark(this.protyle, this.formatData.datatype, "range");
                         }
@@ -151,7 +163,9 @@ export default class PluginSample extends Plugin {
             if (event.key === "Escape") {
                 if (this.formatPainterEnable) {
                     this.formatPainterEnable = false;
+                    document.body.dataset.formatPainterEnable = "false";
                     this.formatData = null;
+                    document.body.style.cursor = "auto"; // 恢复默认光标
                     fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
                 }
             }
