@@ -21,7 +21,6 @@ export default class PluginSample extends Plugin {
     private formatData: { datatype: string, style: string } | null = null;
     private protyle: IProtyle;
     onload() {
-        console.log(this.app);
         this.data[STORAGE_NAME] = { readonlyText: "Readonly" };
         this.protyleOptions = {
             toolbar: ["block-ref",
@@ -65,7 +64,7 @@ export default class PluginSample extends Plugin {
                                 // console.log("选中无样式文字");
                             }
                             this.formatPainterEnable = true;
-                            console.log(this.formatData);
+                            // console.log(this.formatData);
                             fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
                         }
                     }
@@ -101,7 +100,8 @@ export default class PluginSample extends Plugin {
                         if (this.formatData.style) {
                             // console.log(this.formatData.style);
                             // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", { "type": "style1", "color": this.formatData.style });
-                            const { backgroundColor, color } = parseStyle(this.formatData.style);
+                            const { backgroundColor, color, fontSize } = parseStyle(this.formatData.style);
+                            // console.log(backgroundColor, color, fontSize);
 
                             if (backgroundColor) {
                                 this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
@@ -114,6 +114,13 @@ export default class PluginSample extends Plugin {
                                 this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
                                     "type": "color",
                                     "color": color
+                                });
+                            }
+
+                            if (fontSize) {
+                                this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
+                                    "type": "fontSize",
+                                    "color": fontSize
                                 });
                             }
                         }
@@ -136,7 +143,8 @@ export default class PluginSample extends Plugin {
 
             return {
                 backgroundColor: styleObject['background-color'],
-                color: styleObject['color']
+                color: styleObject['color'],
+                fontSize: styleObject['font-size']
             };
         }
         document.addEventListener('keydown', (event) => {
@@ -180,8 +188,6 @@ export default class PluginSample extends Plugin {
     }
 
     onLayoutReady() {
-        this.loadData(STORAGE_NAME);
-        console.log(`frontend: ${getFrontend()}; backend: ${getBackend()}`);
     }
 
     onunload() {
