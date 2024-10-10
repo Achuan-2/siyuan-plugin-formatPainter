@@ -11,11 +11,8 @@ import {
 
 
 const STORAGE_NAME = "menu-config";
-const TAB_TYPE = "custom_tab";
-const DOCK_TYPE = "dock_tab";
 
 export default class PluginSample extends Plugin {
-    private customTab: () => IModel;
     private isMobile: boolean;
     private formatPainterEnable = false;
     private formatData: { datatype: string, style: string } | null = null;
@@ -87,12 +84,7 @@ export default class PluginSample extends Plugin {
                 }
             ],
         };
-        // this.eventBus.on("click-editorcontent", ({ detail }) => {
-        //     if (this.formatPainterEnable && this.formatData) {
-        //         this.protyle = detail.protyle;
-        //     }
 
-        // });
         document.addEventListener('mouseup', (event) => {
             if (this.formatPainterEnable) {
                 const selection = window.getSelection();
@@ -110,10 +102,9 @@ export default class PluginSample extends Plugin {
                             this.protyle.toolbar.setInlineMark(this.protyle, this.formatData.datatype, "range");
                         }
                         if (this.formatData.style) {
-                            // console.log(this.formatData.style);
                             // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", { "type": "style1", "color": this.formatData.style });
-                            const { backgroundColor, color, fontSize } = parseStyle(this.formatData.style);
-                            // console.log(backgroundColor, color, fontSize);
+                            const { backgroundColor, color, fontSize, textShadow, webkitTextStroke, webkitTextFillColor} = parseStyle(this.formatData.style);
+                            // console.log(backgroundColor, color, fontSize, textShadow);
 
                             if (backgroundColor) {
                                 this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
@@ -133,6 +124,18 @@ export default class PluginSample extends Plugin {
                                 this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
                                     "type": "fontSize",
                                     "color": fontSize
+                                });
+                            }
+                            if (textShadow) {
+                                this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
+                                    "type": "style4", //投影效果
+                                    "color": textShadow 
+                                });
+                            }
+                            if (webkitTextStroke) {
+                                this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
+                                    "type": "style2", //镂空效果
+                                    "color": webkitTextStroke
                                 });
                             }
                         }
@@ -156,7 +159,10 @@ export default class PluginSample extends Plugin {
             return {
                 backgroundColor: styleObject['background-color'],
                 color: styleObject['color'],
-                fontSize: styleObject['font-size']
+                fontSize: styleObject['font-size'],
+                textShadow: styleObject['text-shadow'],
+                webkitTextStroke: styleObject['-webkit-text-stroke'],
+                webkitTextFillColor: styleObject['-webkit-text-fill-color']
             };
         }
         document.addEventListener('keydown', (event) => {
