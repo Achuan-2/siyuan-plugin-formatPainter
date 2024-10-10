@@ -1,0 +1,44 @@
+{
+  "name": "siyuan-plugin-formatPainter",
+  "author": "Achuan-2",
+  "url": "https://github.com/Achuan-2/siyuan-plugin-formatPainter",
+  "version": "0.0.1",
+  "minAppVersion": "3.0.12",
+  "backends": [
+    "windows",
+    "linux",
+    "darwin",
+    "ios",
+    "android",
+    "docker"
+  ],
+  "frontends": [
+    "desktop",
+    "browser-desktop",
+    "desktop-window"
+  ],
+  "displayName": {
+    "default": "Format Painter",
+    "zh_CN": "格式刷"
+  },
+  "description": {
+    "default": "Use the format painter to batch apply styles",
+    "zh_CN": "使用格式刷批量添加样式"
+  },
+  "readme": {
+    "default": "README.md",
+    "zh_CN": "README_zh_CN.md"
+  },
+  "funding": {
+    "openCollective": "",
+    "patreon": "",
+    "github": "",
+    "custom": [
+      "https://www.yuque.com/achuan-2"
+    ]
+  },
+  "keywords": [
+    "Format Painter",
+    "格式刷"
+  ]
+}
