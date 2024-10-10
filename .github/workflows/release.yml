@@ -25,7 +25,7 @@ jobs:
         uses: pnpm/action-setup@v2
         id: pnpm-install
         with:
-          version: 8.12
+          version: 8
           run_install: false
 
       # Get pnpm store directory
@@ -46,7 +46,7 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install
 
       # Build for production, 这一步会生成一个 package.zip
       - name: Build for production
@@ -59,4 +59,4 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: "package.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
+          prerelease: false
