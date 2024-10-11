@@ -62,7 +62,7 @@ export default class PluginSample extends Plugin {
                             }
                             this.formatPainterEnable = true;
                             document.body.dataset.formatPainterEnable ="true";
-                            console.log(this.formatData);
+                            // console.log(this.formatData);
                             fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
                             this.protyle.toolbar.range.collapse(true);
                             // 关闭toolbar
@@ -103,7 +103,7 @@ export default class PluginSample extends Plugin {
                             }
                         } 
                         this.protyle.toolbar.range = range;  // 更改选区
-                        console.log(this.protyle.toolbar.range.toString());
+                        // console.log(this.protyle.toolbar.range.toString());
                         // Apply the stored format to the selected text
                         // 如果都为空
                         this.protyle.toolbar.setInlineMark(this.protyle, "clear", "range");
@@ -112,7 +112,7 @@ export default class PluginSample extends Plugin {
                             return;
                         }
                         if (this.formatData.datatype) {
-                            console.log(this.formatData.datatype);
+                            // console.log(this.formatData.datatype);
 
 
                             // this.protyle.toolbar.setInlineMark(this.protyle, this.formatData.datatype, "range");
@@ -207,7 +207,7 @@ export default class PluginSample extends Plugin {
                     }
                 }
 
-                console.log(selectedNode);
+                // console.log(selectedNode);
                 // console.log(endNode);
 
                 let parentElement = selectedNode.nodeType === Node.TEXT_NODE ? selectedNode.parentNode : selectedNode;
