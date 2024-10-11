@@ -10,7 +10,6 @@ import {
 } from "siyuan";
 
 
-const STORAGE_NAME = "menu-config";
 
 export default class PluginSample extends Plugin {
     private isMobile: boolean;
@@ -18,7 +17,6 @@ export default class PluginSample extends Plugin {
     private formatData: { datatype: string, style: string } | null = null;
     private protyle: IProtyle;
     onload() {
-        this.data[STORAGE_NAME] = { readonlyText: "Readonly" };
         this.protyleOptions = {
             toolbar: ["block-ref",
                 "a",
@@ -46,7 +44,7 @@ export default class PluginSample extends Plugin {
                     tip: this.i18n.tips,
                     click: (protyle: Protyle) => {
                         this.protyle = protyle.protyle;
-                        
+
                         if (!this.formatPainterEnable) {
                             const selectedInfo = getSelectedParentHtml();
                             if (selectedInfo) {
@@ -61,14 +59,21 @@ export default class PluginSample extends Plugin {
                                 // console.log("选中无样式文字");
                             }
                             this.formatPainterEnable = true;
-                            document.body.dataset.formatPainterEnable ="true";
+                            document.body.dataset.formatPainterEnable = "true";
                             // console.log(this.formatData);
                             fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
-                            this.protyle.toolbar.range.collapse(true);
+
+                            ///v dock indicator worker
+                            const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+                            if (indicator) {
+                                (indicator as HTMLElement).style.display = "flex";
+                            }
+                            ///^ dock indicator worker
+
                             // 关闭toolbar
+                            this.protyle.toolbar.range.collapse(true);
                             // 选择所有具有 .protyle-toolbar 类的元素
                             const toolbarElements = document.querySelectorAll('.protyle-toolbar');
-
                             // 遍历选中的元素
                             toolbarElements.forEach(element => {
                                 // 检查元素是否没有 .fn__none 类
@@ -94,14 +99,14 @@ export default class PluginSample extends Plugin {
                     const selectedText = range.toString();
                     if (selectedText) {
                         const startBlockElement = hasClosestBlock(range.startContainer);
-                        if ( range.endContainer.nodeType !== 3 && (range.endContainer as HTMLElement).tagName === "DIV" && range.endOffset === 0) {
+                        if (range.endContainer.nodeType !== 3 && (range.endContainer as HTMLElement).tagName === "DIV" && range.endOffset === 0) {
                             // 三选中段落块时，rangeEnd 会在下一个块
                             if ((range.endContainer as HTMLElement).classList.contains("protyle-attr") && startBlockElement) {
                                 // 三击在悬浮层中会选择到 attr https://github.com/siyuan-note/siyuan/issues/4636
                                 // 需要获取可编辑元素，使用 previousElementSibling 的话会 https://github.com/siyuan-note/siyuan/issues/9714
                                 setLastNodeRange(getContenteditableElement(startBlockElement), range, false);
                             }
-                        } 
+                        }
                         this.protyle.toolbar.range = range;  // 更改选区
                         // console.log(this.protyle.toolbar.range.toString());
                         // Apply the stored format to the selected text
@@ -123,26 +128,22 @@ export default class PluginSample extends Plugin {
                                     type: "inline-math",
                                 });
                                 hasmath = true;
-                            } 
+                            }
                             const otherTypes = this.formatData.datatype.replace(/\b(inline-math|block-ref|a|text)\b/g, "").trim();
                             if (otherTypes) {
                                 this.protyle.toolbar.setInlineMark(this.protyle, otherTypes, "range");
-                                this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
-                                    "type": "color",
-                                    "color": "#FF0000"
-                                });
                             }
                         }
                         if (this.formatData.style) {
                             // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", { "type": "style1", "color": this.formatData.style });
                             // console.log(backgroundColor, color, fontSize, textShadow);
-                           let type = "text";
+                            let type = "text";
                             if (hasmath) {
                                 // 数学公式加颜色有bug
                                 type = "inline-math";
                                 return;
-                            } 
-                            const { backgroundColor, color, fontSize, textShadow, webkitTextStroke, webkitTextFillColor} = parseStyle(this.formatData.style);
+                            }
+                            const { backgroundColor, color, fontSize, textShadow, webkitTextStroke, webkitTextFillColor } = parseStyle(this.formatData.style);
                             if (backgroundColor) {
                                 this.protyle.toolbar.setInlineMark(this.protyle, type, "range", {
                                     "type": "backgroundColor",
@@ -166,7 +167,7 @@ export default class PluginSample extends Plugin {
                             if (textShadow) {
                                 this.protyle.toolbar.setInlineMark(this.protyle, type, "range", {
                                     "type": "style4", //投影效果
-                                    "color": textShadow 
+                                    "color": textShadow
                                 });
                             }
                             if (webkitTextStroke) {
@@ -190,8 +191,14 @@ export default class PluginSample extends Plugin {
                     this.formatPainterEnable = false;
                     document.body.dataset.formatPainterEnable = "false";
                     this.formatData = null;
-                    document.body.style.cursor = "auto"; // 恢复默认光标
                     fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
+
+                    ///v dock indicator worker
+                    const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+                    if (indicator) {
+                        (indicator as HTMLElement).style.display = "none";
+                    }
+                    ///^ dock indicator worker
                 }
             }
         });
@@ -311,9 +318,51 @@ export default class PluginSample extends Plugin {
         console.log(this.i18n.helloPlugin);
     }
 
+    addDockBrushModeIndicator() {
+        const indicator = document.createElement("div");
+        indicator.classList.add("siyuan-plugin-formatPainter_brush_indicator", "status__counter", "toolbar__item", "ariaLabel", "blink-animation");
+        indicator.innerHTML = `<svg class="icon"><use xlink:href="#iconFormat"></use></svg>`;
+        this.addStatusBar({
+            element: indicator,
+        });
+        indicator.style.display = "none";
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes blink {
+                0% { opacity: 1; }
+                50% { opacity: 0.2; }
+                100% { opacity: 1; }
+            }
+            .blink-animation {
+                animation: blink 1s infinite;
+            }
+        `;
+        document.head.appendChild(style);
+
+        indicator.addEventListener('click', () => {
+            this.toggleFormatPainter();
+        });
+    }
+
+    toggleFormatPainter() {
+        if (this.formatPainterEnable) {
+            fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
+            document.body.dataset.formatPainterEnable = "false";
+        } else {
+            fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+            document.body.dataset.formatPainterEnable = "true";
+        }
+        this.formatPainterEnable = !this.formatPainterEnable;
+        const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+        if (indicator) {
+            (indicator as HTMLElement).style.display = this.formatPainterEnable ? "flex" : "none";
+        }
+    }
 
 
     onLayoutReady() {
+        this.addDockBrushModeIndicator();
     }
 
     onunload() {

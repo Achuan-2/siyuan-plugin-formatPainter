@@ -8,3 +8,6 @@ index.css
 index.js
 /i18n
 release.sh
+
+#pnpm
+pnpm-lock.yaml

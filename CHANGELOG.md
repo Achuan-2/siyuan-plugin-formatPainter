@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.0.9 / 2024.10.11
+- 当格式刷启动时候，dock底栏最右侧添加一个按钮，按钮图案渐变闪烁，点击该按钮可以退出格式刷模式（[pull request](https://github.com/Achuan-2/siyuan-plugin-formatPainter/pull/1)）
+
 ## v1.0.8 / 2024.10.11
 - 排除对超链接、块引的格式刷
 - 支持公式的格式刷
