@@ -64,6 +64,14 @@ export default class PluginSample extends Plugin {
                             document.body.dataset.formatPainterEnable ="true";
                             // console.log(this.formatData);
                             fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+
+                            ///v dock indicator worker
+                            const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+                            if (indicator) {
+                                (indicator as HTMLElement).style.display = "flex";
+                            }
+                            ///^ dock indicator worker
+
                             this.protyle.toolbar.range.collapse(true);
                             // 关闭toolbar
                             // 选择所有具有 .protyle-toolbar 类的元素
@@ -192,6 +200,13 @@ export default class PluginSample extends Plugin {
                     this.formatData = null;
                     document.body.style.cursor = "auto"; // 恢复默认光标
                     fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
+
+                    ///v dock indicator worker
+                    const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+                    if (indicator) {
+                        (indicator as HTMLElement).style.display = "none";
+                    }
+                    ///^ dock indicator worker
                 }
             }
         });
@@ -311,9 +326,49 @@ export default class PluginSample extends Plugin {
         console.log(this.i18n.helloPlugin);
     }
 
+    addDockBrushModeIndicator() {
+        const indicator = document.createElement("div");
+        indicator.classList.add("siyuan-plugin-formatPainter_brush_indicator", "status__counter", "toolbar__item", "ariaLabel", "blink-animation");
+        indicator.innerHTML = `<svg class="icon"><use xlink:href="#iconFormat"></use></svg>`;
+        this.addStatusBar({
+            element: indicator,
+        });
+        indicator.style.display = "none";
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes blink {
+                0% { opacity: 1; }
+                50% { opacity: 0.2; }
+                100% { opacity: 1; }
+            }
+            .blink-animation {
+                animation: blink 1s infinite;
+            }
+        `;
+        document.head.appendChild(style);
+
+        indicator.addEventListener('click', () => {
+            this.toggleFormatPainter();
+        });
+    }
+
+    toggleFormatPainter() {
+        if (this.formatPainterEnable){
+            fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
+        }else{
+            fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+        }
+        this.formatPainterEnable = !this.formatPainterEnable;
+        const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+        if (indicator) {
+            (indicator as HTMLElement).style.display = this.formatPainterEnable ? "flex" : "none";
+        }
+    }
 
 
     onLayoutReady() {
+        this.addDockBrushModeIndicator();
     }
 
     onunload() {
