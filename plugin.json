@@ -2,7 +2,7 @@
   "name": "siyuan-plugin-formatPainter",
   "author": "Achuan-2",
   "url": "https://github.com/Achuan-2/siyuan-plugin-formatPainter",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "minAppVersion": "3.0.12",
   "backends": [
     "windows",

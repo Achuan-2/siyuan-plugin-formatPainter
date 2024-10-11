@@ -127,8 +127,11 @@ export default class PluginSample extends Plugin {
                             const otherTypes = this.formatData.datatype.replace(/\b(inline-math|block-ref|a|text)\b/g, "").trim();
                             if (otherTypes) {
                                 this.protyle.toolbar.setInlineMark(this.protyle, otherTypes, "range");
+                                this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", {
+                                    "type": "color",
+                                    "color": "#FF0000"
+                                });
                             }
-
                         }
                         if (this.formatData.style) {
                             // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", { "type": "style1", "color": this.formatData.style });
@@ -206,9 +209,6 @@ export default class PluginSample extends Plugin {
                         selectedNode = previousSibling;
                     }
                 }
-
-                // console.log(selectedNode);
-                // console.log(endNode);
 
                 let parentElement = selectedNode.nodeType === Node.TEXT_NODE ? selectedNode.parentNode : selectedNode;
                 while (parentElement && !parentElement.hasAttribute("data-type")) {
