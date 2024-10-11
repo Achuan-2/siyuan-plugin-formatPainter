@@ -15,11 +15,7 @@ Therefore, inspired by the format painter in Office, I developed this format pai
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/思源笔记格式刷插件-2024-10-10.gif)
 
-## 🐛 Known Bugs
 
-- Currently does not support math formula format painter (don't know how to solve it yet)
-- If the format painter copies a style without color and the text to be painted already has a color, it will not replace its color (the logic is to add styles, not completely replace them)
-- The format painter link style may produce null inline links.
 
 ## ❤️ Powered by Love
 

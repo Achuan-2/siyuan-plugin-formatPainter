@@ -17,10 +17,6 @@
 
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/思源笔记格式刷插件-2024-10-10.gif)
 
-## 🐛已知bug
-
-- 暂不支持数学公式格式刷（暂时不知道怎么解决）
-- 格式刷链接样式会产生null行内链接。
 
 
 ## ❤️用爱发电
