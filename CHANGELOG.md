@@ -1,7 +1,12 @@
 # Changelog
 
+## v1.1.1 / 2024.10.12
+- ✨ 交互优化：打开格式刷模式的时候，弹窗提示如何关闭格式刷
+- ✨ 交互优化：右下角dock栏关闭格式刷按钮添加aria-label
+
 ## v1.1.0 / 2024.10.12
 - 🐛 更改webpack.config.js，修复index.css和assets没有被打包的问题
+
 
 ## v1.0.9 / 2024.10.11
 - ✨当格式刷启动时候，dock底栏最右侧添加一个按钮，按钮图案渐变闪烁，点击该按钮可以退出格式刷模式（[pull request](https://github.com/Achuan-2/siyuan-plugin-formatPainter/pull/1)）

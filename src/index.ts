@@ -326,6 +326,8 @@ export default class PluginSample extends Plugin {
         this.addStatusBar({
             element: indicator,
         });
+        // indicator添加aria - label
+        indicator.setAttribute("aria-label", this.i18n.closeTips);
         indicator.style.display = "none";
 
         const style = document.createElement('style');

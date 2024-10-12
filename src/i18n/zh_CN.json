@@ -2,6 +2,7 @@
   "helloPlugin": "你好，插件！",
   "byePlugin": "再见，插件！",
   "tips": "格式刷",
-  "enable": "格式刷已启用",
-  "disable": "格式刷已关闭"
+  "enable": "格式刷已启用，按【Esc键】或者【右下角dock栏按钮】退出格式刷模式",
+  "disable": "格式刷已关闭",
+  "closeTips": "关闭格式刷"
 }
