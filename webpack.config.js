@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const webpack = require("webpack");
-const {EsbuildPlugin} = require("esbuild-loader");
+const { EsbuildPlugin } = require("esbuild-loader");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const ZipPlugin = require("zip-webpack-plugin");
@@ -26,12 +26,15 @@ module.exports = (env, argv) => {
             },
         }));
         plugins.push(new CopyPlugin({
+            // 用途：把文件放在dist，用来打包
             patterns: [
-                {from: "preview.png", to: "./dist/"},
-                {from: "icon.png", to: "./dist/"},
-                {from: "README*.md", to: "./dist/"},
-                {from: "plugin.json", to: "./dist/"},
-                {from: "src/i18n/", to: "./dist/i18n/"},
+                { from: "preview.png", to: "./dist/" },
+                { from: "icon.png", to: "./dist/" },
+                { from: "README*.md", to: "./dist/" },
+                { from: "plugin.json", to: "./dist/" },
+                { from: "src/i18n/", to: "./dist/i18n/" },
+                { from: "src/index.css", to: "./dist/" }, // Add this line
+                { from: "src/assets/", to: "./dist/assets/" } // Add this line
             ],
         }));
         plugins.push(new ZipPlugin({
@@ -44,8 +47,11 @@ module.exports = (env, argv) => {
         }));
     } else {
         plugins.push(new CopyPlugin({
+            // 用途：run dev的时候放在当前目录，可以直接运行
             patterns: [
-                {from: "src/i18n/", to: "./i18n/"},
+                { from: "src/i18n/", to: "./i18n/" },
+                { from: "src/index.css", to: "./" }, // Add this line
+                { from: "src/assets/", to: "./assets/" } // Add this line
             ],
         }));
     }

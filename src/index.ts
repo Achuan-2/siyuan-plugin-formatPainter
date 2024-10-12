@@ -11,6 +11,7 @@ import {
 
 
 
+
 export default class PluginSample extends Plugin {
     private isMobile: boolean;
     private formatPainterEnable = false;
