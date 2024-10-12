@@ -7,7 +7,7 @@ package.zip
 index.css
 index.js
 /i18n
-release.sh
+# release.sh
 /assets
 #pnpm
 pnpm-lock.yaml
