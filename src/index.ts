@@ -62,7 +62,7 @@ export default class PluginSample extends Plugin {
                             this.formatPainterEnable = true;
                             document.body.dataset.formatPainterEnable = "true";
                             // console.log(this.formatData);
-                            fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+                            fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
 
                             ///v dock indicator worker
                             const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
@@ -113,7 +113,7 @@ export default class PluginSample extends Plugin {
                         // Apply the stored format to the selected text
                         // 如果都为空
                         this.protyle.toolbar.setInlineMark(this.protyle, "clear", "range");
-                        this.protyle.toolbar.setInlineMark(this.protyle, "text", "range");
+                        // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range");
                         if (!this.formatData) {
                             return;
                         }
@@ -182,6 +182,18 @@ export default class PluginSample extends Plugin {
                         // console.log("Format applied to selected text");
                         // 清空选区
                         selection.removeAllRanges();
+                        this.protyle.toolbar.range.collapse(true);
+                        // 选择所有具有 .protyle-toolbar 类的元素
+                        const toolbarElements = document.querySelectorAll('.protyle-toolbar');
+                        // 遍历选中的元素
+                        toolbarElements.forEach(element => {
+                            // 检查元素是否没有 .fn__none 类
+                            if (!element.classList.contains('fn__none')) {
+                                // 如果没有 .fn__none 类，则添加它
+                                element.classList.add('fn__none');
+                            }
+                        });
+
                     }
                 }
             }
@@ -353,7 +365,7 @@ export default class PluginSample extends Plugin {
             fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
             document.body.dataset.formatPainterEnable = "false";
         } else {
-            fetchPost("/api/notification/pushErrMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+            fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
             document.body.dataset.formatPainterEnable = "true";
         }
         this.formatPainterEnable = !this.formatPainterEnable;
