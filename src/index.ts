@@ -9,6 +9,8 @@ import {
     Toolbar
 } from "siyuan";
 
+import { IMenuItem } from "siyuan/types";
+
 
 
 
@@ -17,79 +19,64 @@ export default class PluginSample extends Plugin {
     private formatPainterEnable = false;
     private formatData: { datatype: string, style: string } | null = null;
     private protyle: IProtyle;
-    onload() {
-        this.protyleOptions = {
-            toolbar: ["block-ref",
-                "a",
-                "|",
-                "text",
-                "strong",
-                "em",
-                "u",
-                "s",
-                "mark",
-                "sup",
-                "sub",
-                "clear",
-                "|",
-                "code",
-                "kbd",
-                "tag",
-                "inline-math",
-                "inline-memo",
-                "|",
-                {
-                    name: "format-painter",
-                    icon: "iconFormat",
-                    tipPosition: "n",
-                    tip: this.i18n.tips,
-                    click: (protyle: Protyle) => {
-                        this.protyle = protyle.protyle;
 
-                        if (!this.formatPainterEnable) {
-                            const selectedInfo = getSelectedParentHtml();
-                            if (selectedInfo) {
-                                this.formatData = {
-                                    datatype: selectedInfo.datatype,
-                                    style: selectedInfo.style
-                                };
+    // 添加工具栏按钮
+    updateProtyleToolbar(toolbar: Array<string | IMenuItem>) {
+        toolbar.push(
+            {
+                name: "format-painter",
+                icon: "iconFormat",
+                tipPosition: "n",
+                tip: this.i18n.tips,
+                click: (protyle: Protyle) => {
+                    this.protyle = protyle.protyle;
 
-                            }
-                            else {
-                                this.formatData = null;
-                                // console.log("选中无样式文字");
-                            }
-                            this.formatPainterEnable = true;
-                            document.body.dataset.formatPainterEnable = "true";
-                            // console.log(this.formatData);
-                            fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
-
-                            ///v dock indicator worker
-                            const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
-                            if (indicator) {
-                                (indicator as HTMLElement).style.display = "flex";
-                            }
-                            ///^ dock indicator worker
-
-                            // 关闭toolbar
-                            this.protyle.toolbar.range.collapse(true);
-                            // 选择所有具有 .protyle-toolbar 类的元素
-                            const toolbarElements = document.querySelectorAll('.protyle-toolbar');
-                            // 遍历选中的元素
-                            toolbarElements.forEach(element => {
-                                // 检查元素是否没有 .fn__none 类
-                                if (!element.classList.contains('fn__none')) {
-                                    // 如果没有 .fn__none 类，则添加它
-                                    element.classList.add('fn__none');
-                                }
-                            });
-
+                    if (!this.formatPainterEnable) {
+                        const selectedInfo = getSelectedParentHtml();
+                        if (selectedInfo) {
+                            this.formatData = {
+                                datatype: selectedInfo.datatype,
+                                style: selectedInfo.style
+                            };
 
                         }
+                        else {
+                            this.formatData = null;
+                            // console.log("选中无样式文字");
+                        }
+                        this.formatPainterEnable = true;
+                        document.body.dataset.formatPainterEnable = "true";
+                        // console.log(this.formatData);
+                        fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+
+                        ///v dock indicator worker
+                        const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+                        if (indicator) {
+                            (indicator as HTMLElement).style.display = "flex";
+                        }
+                        ///^ dock indicator worker
+
+                        // 关闭toolbar
+                        this.protyle.toolbar.range.collapse(true);
+                        // 选择所有具有 .protyle-toolbar 类的元素
+                        const toolbarElements = document.querySelectorAll('.protyle-toolbar');
+                        // 遍历选中的元素
+                        toolbarElements.forEach(element => {
+                            // 检查元素是否没有 .fn__none 类
+                            if (!element.classList.contains("fn__none")) {
+                                // 如果没有 .fn__none 类，则添加它
+                                element.classList.add("fn__none");
+                            }
+                        });
+
+
                     }
                 }
-            ],
-        };
+            }
+        );
+        return toolbar;
+    }
+    onload() {
 
         document.addEventListener('mouseup', (event) => {
             if (this.formatPainterEnable) {
