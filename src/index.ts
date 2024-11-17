@@ -1,379 +1,166 @@
 import {
     Plugin,
+    showMessage,
+    Dialog,
     getFrontend,
     getBackend,
-    fetchPost,
-    IModel,
-    Protyle,
-    IProtyle,
-    Toolbar
+    Protyle
 } from "siyuan";
+import "@/index.scss";
 
-import { IMenuItem } from "siyuan/types";
+import SettingPannel from "@/libs/setting-panel.svelte";
+import { appendBlock, deleteBlock, setBlockAttrs } from "./api";
 
+const STORAGE_NAME = "menu-config";
+const zeroWhite = "​"
 
+let addFloatLayer
+export default class PluginMemo extends Plugin {
 
-
-export default class PluginSample extends Plugin {
     private isMobile: boolean;
-    private formatPainterEnable = false;
-    private formatData: { datatype: string, style: string } | null = null;
-    private protyle: IProtyle;
 
     // 添加工具栏按钮
     updateProtyleToolbar(toolbar: Array<string | IMenuItem>) {
         toolbar.push(
             {
-                name: "format-painter",
-                icon: "iconFormat",
+                name: "footnote",
+                icon: "iconInfo",
                 tipPosition: "n",
                 tip: this.i18n.tips,
                 click: (protyle: Protyle) => {
                     this.protyle = protyle.protyle;
-
-                    if (!this.formatPainterEnable) {
-                        const selectedInfo = this.getSelectedParentHtml();
-                        if (selectedInfo) {
-                            this.formatData = {
-                                datatype: selectedInfo.datatype,
-                                style: selectedInfo.style
-                            };
-
-                        }
-                        else {
-                            this.formatData = null;
-                            // console.log("选中无样式文字");
-                        }
-                        this.formatPainterEnable = true;
-                        document.body.dataset.formatPainterEnable = "true";
-                        // console.log(this.formatData);
-                        fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
-
-                        ///v dock indicator worker
-                        const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
-                        if (indicator) {
-                            (indicator as HTMLElement).style.display = "flex";
-                        }
-                        ///^ dock indicator worker
-
-                        // 关闭toolbar
-                        this.protyle.toolbar.range.collapse(true);
-                        // 选择所有具有 .protyle-toolbar 类的元素
-                        const toolbarElements = document.querySelectorAll('.protyle-toolbar');
-                        // 遍历选中的元素
-                        toolbarElements.forEach(element => {
-                            // 检查元素是否没有 .fn__none 类
-                            if (!element.classList.contains("fn__none")) {
-                                // 如果没有 .fn__none 类，则添加它
-                                element.classList.add("fn__none");
-                            }
-                        });
-
-
-                    }
+                    addMemoBlock(this.protyle);
                 }
             }
         );
         return toolbar;
     }
-    onload() {
 
-        document.addEventListener('mouseup', (event) => {
-            if (this.formatPainterEnable) {
-                const selection = window.getSelection();
-                let hasmath = false;
-                if (selection && selection.rangeCount > 0) {
-                    const range = selection.getRangeAt(0);
-                    const selectedText = range.toString();
-                    if (selectedText) {
-                        const startBlockElement = hasClosestBlock(range.startContainer);
-                        if (range.endContainer.nodeType !== 3 && (range.endContainer as HTMLElement).tagName === "DIV" && range.endOffset === 0) {
-                            // 三选中段落块时，rangeEnd 会在下一个块
-                            if ((range.endContainer as HTMLElement).classList.contains("protyle-attr") && startBlockElement) {
-                                // 三击在悬浮层中会选择到 attr https://github.com/siyuan-note/siyuan/issues/4636
-                                // 需要获取可编辑元素，使用 previousElementSibling 的话会 https://github.com/siyuan-note/siyuan/issues/9714
-                                setLastNodeRange(getContenteditableElement(startBlockElement), range, false);
-                            }
-                        }
-                        this.protyle.toolbar.range = range;  // 更改选区
-                        // console.log(this.protyle.toolbar.range.toString());
-                        // Apply the stored format to the selected text
-                        // 如果都为空
-                        this.protyle.toolbar.setInlineMark(this.protyle, "clear", "range");
-                        // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range");
-                        if (!this.formatData) {
-                            return;
-                        }
-                        if (this.formatData.datatype) {
-                            // console.log(this.formatData.datatype);
+    async onload() {
+        this.data[STORAGE_NAME] = { readonlyText: "Readonly" };
 
+        console.log("loading plugin-sample", this.i18n);
+        addFloatLayer = this.addFloatLayer
 
-                            // this.protyle.toolbar.setInlineMark(this.protyle, this.formatData.datatype, "range");
-                            // 检查是否包含 "inline-math"
-                            if (this.formatData.datatype.includes("inline-math")) {
-                                // 单独设置 "inline-math" 样式
-                                this.protyle.toolbar.setInlineMark(this.protyle, "inline-math", "range", {
-                                    type: "inline-math",
-                                });
-                                hasmath = true;
-                            }
-                            const otherTypes = this.formatData.datatype.replace(/\b(inline-math|block-ref|a|text)\b/g, "").trim();
-                            if (otherTypes) {
-                                this.protyle.toolbar.setInlineMark(this.protyle, otherTypes, "range");
-                            }
-                        }
-                        if (this.formatData.style) {
-                            // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range", { "type": "style1", "color": this.formatData.style });
-                            // console.log(backgroundColor, color, fontSize, textShadow);
-                            let type = "text";
-                            if (hasmath) {
-                                // 数学公式加颜色有bug
-                                type = "inline-math";
-                                return;
-                            }
-                            const { backgroundColor, color, fontSize, textShadow, webkitTextStroke, webkitTextFillColor } = parseStyle(this.formatData.style);
-                            if (backgroundColor) {
-                                this.protyle.toolbar.setInlineMark(this.protyle, type, "range", {
-                                    "type": "backgroundColor",
-                                    "color": backgroundColor
-                                });
-                            }
-
-                            if (color) {
-                                this.protyle.toolbar.setInlineMark(this.protyle, type, "range", {
-                                    "type": "color",
-                                    "color": color
-                                });
-                            }
-
-                            if (fontSize) {
-                                this.protyle.toolbar.setInlineMark(this.protyle, type, "range", {
-                                    "type": "fontSize",
-                                    "color": fontSize
-                                });
-                            }
-                            if (textShadow) {
-                                this.protyle.toolbar.setInlineMark(this.protyle, type, "range", {
-                                    "type": "style4", //投影效果
-                                    "color": textShadow
-                                });
-                            }
-                            if (webkitTextStroke) {
-                                this.protyle.toolbar.setInlineMark(this.protyle, type, "range", {
-                                    "type": "style2", //镂空效果
-                                    "color": webkitTextStroke
-                                });
-                            }
-                        }
-
-                        // console.log("Format applied to selected text");
-                        // 清空选区
-                        selection.removeAllRanges();
-                        this.protyle.toolbar.range.collapse(true);
-                        // 选择所有具有 .protyle-toolbar 类的元素
-                        const toolbarElements = document.querySelectorAll('.protyle-toolbar');
-                        // 遍历选中的元素
-                        toolbarElements.forEach(element => {
-                            // 检查元素是否没有 .fn__none 类
-                            if (!element.classList.contains('fn__none')) {
-                                // 如果没有 .fn__none 类，则添加它
-                                element.classList.add('fn__none');
-                            }
-                        });
-
-                    }
-                }
-            }
-        });
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") {
-                if (this.formatPainterEnable) {
-                    this.formatPainterEnable = false;
-                    document.body.dataset.formatPainterEnable = "false";
-                    this.formatData = null;
-                    fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
-
-                    ///v dock indicator worker
-                    const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
-                    if (indicator) {
-                        (indicator as HTMLElement).style.display = "none";
-                    }
-                    ///^ dock indicator worker
-                }
-            }
-        });
-
-
-        const hasClosestByAttribute = (element: Node, attr: string, value: string | null, top = false) => {
-            if (!element) {
-                return false;
-            }
-            if (element.nodeType === 3) {
-                element = element.parentElement;
-            }
-            let e = element as HTMLElement;
-            let isClosest = false;
-            while (e && !isClosest && (top ? e.tagName !== "BODY" : !e.classList.contains("protyle-wysiwyg"))) {
-                if (typeof value === "string" && e.getAttribute(attr)?.split(" ").includes(value)) {
-                    isClosest = true;
-                } else if (typeof value !== "string" && e.hasAttribute(attr)) {
-                    isClosest = true;
-                } else {
-                    e = e.parentElement;
-                }
-            }
-            return isClosest && e;
-        };
-        const hasClosestBlock = (element: Node) => {
-            const nodeElement = hasClosestByAttribute(element, "data-node-id", null);
-            if (nodeElement && nodeElement.tagName !== "BUTTON" && nodeElement.getAttribute("data-type")?.startsWith("Node")) {
-                return nodeElement;
-            }
-            return false;
-        };
-        const getContenteditableElement = (element: Element) => {
-            if (!element || (element.getAttribute("contenteditable") === "true") && !element.classList.contains("protyle-wysiwyg")) {
-                return element;
-            }
-            return element.querySelector('[contenteditable="true"]');
-        };
-        const setLastNodeRange = (editElement: Element, range: Range, setStart = true) => {
-            if (!editElement) {
-                return range;
-            }
-            let lastNode = editElement.lastChild as Element;
-            while (lastNode && lastNode.nodeType !== 3) {
-                if (lastNode.nodeType !== 3 && lastNode.tagName === "BR") {
-                    // 防止单元格中 ⇧↓ 全部选中
-                    return range;
-                }
-                // 最后一个为多种行内元素嵌套
-                lastNode = lastNode.lastChild as Element;
-            }
-            if (!lastNode) {
-                range.selectNodeContents(editElement);
-                return range;
-            }
-            if (setStart) {
-                range.setStart(lastNode, lastNode.textContent.length);
-            } else {
-                range.setEnd(lastNode, lastNode.textContent.length);
-            }
-            return range;
-        };
-        function parseStyle(styleString) {
-            const styles = styleString.split(';').filter(s => s.trim() !== '');
-            const styleObject = {};
-
-            styles.forEach(style => {
-                const [property, value] = style.split(':').map(s => s.trim());
-                styleObject[property] = value;
-            });
-
-            return {
-                backgroundColor: styleObject['background-color'],
-                color: styleObject['color'],
-                fontSize: styleObject['font-size'],
-                textShadow: styleObject['text-shadow'],
-                webkitTextStroke: styleObject['-webkit-text-stroke'],
-                webkitTextFillColor: styleObject['-webkit-text-fill-color']
-            };
-        }
-
-
+        const frontEnd = getFrontend();
+        this.isMobile = frontEnd === "mobile" || frontEnd === "browser-mobile";
+        // 图标的制作参见帮助文档
         console.log(this.i18n.helloPlugin);
+        this.eventBus.on("open-menu-blockref",this.deleteMemo)
+        this.addCommand({
+            langKey:"addMemo",
+            hotkey:"",
+            langText:"add memo",
+            editorCallback:(protyle:any)=>{
+                addMemoBlock(protyle)
+            }
+        })
     }
-    getSelectedParentHtml() {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            let selectedNode = range.startContainer;
-            const endNode = range.endContainer;
 
-            // 检查 endNode 的 previousSibling
-            if (endNode.previousSibling && endNode.previousSibling.nodeType === Node.ELEMENT_NODE) {
-                const previousSibling = endNode.previousSibling;
-                if (previousSibling.tagName.toLowerCase() === "span" && previousSibling.classList.contains("render-node")) {
-                    selectedNode = previousSibling;
-                }
-            }
+    onLayoutReady() {
+        this.loadData(STORAGE_NAME);
+        console.log(`frontend: ${getFrontend()}; backend: ${getBackend()}`);
+    }
 
-            let parentElement = selectedNode.nodeType === Node.TEXT_NODE ? selectedNode.parentNode : selectedNode;
-            while (parentElement && !parentElement.hasAttribute("data-type")) {
-                parentElement = parentElement.parentElement;
-            }
+    onunload() {
+        console.log(this.i18n.byePlugin);
+        showMessage("Goodbye SiYuan Plugin");
+        console.log("onunload");
+    }
 
-            if (parentElement && parentElement.tagName.toLowerCase() === "span") {
-                const result = {
-                    html: parentElement.outerHTML,
-                    datatype: parentElement.getAttribute("data-type"),
-                    style: parentElement.getAttribute("style")
-                };
-                // 清空选区
-                selection.removeAllRanges();
-                return result;
+    /**
+     * A custom setting pannel provided by svelte
+     */
+    openDIYSetting(): void {
+        let dialog = new Dialog({
+            title: "SettingPannel",
+            content: `<div id="SettingPanel"></div>`,
+            width: "600px",
+            destroyCallback: (options) => {
+                console.log("destroyCallback", options);
+                //You'd better destroy the component when the dialog is closed
+                pannel.$destroy();
             }
+        });
+        let pannel = new SettingPannel({
+            target: dialog.element.querySelector("#SettingPanel"),
+        });
+    }
+
+    private deleteMemo({ detail }: any){
+        // console.log(detail)
+        if(detail.element && detail.element.style.cssText.indexOf("memo")!=-1){
+           detail.menu.addItem({
+            icon: "iconTrashcan",
+            label: "删除 Memo",
+            click: () => {
+                deleteBlock(detail.element.getAttribute("data-id"));
+                detail.element.outerHTML = detail.element.innerText
+            }
+        });
         }
-        // 清空选区
-        selection.removeAllRanges();
-        return null;
-}
-addDockBrushModeIndicator() {
-    const indicator = document.createElement("div");
-    indicator.classList.add("siyuan-plugin-formatPainter_brush_indicator", "status__counter", "toolbar__item", "ariaLabel", "blink-animation");
-    indicator.innerHTML = `<svg class="icon"><use xlink:href="#iconFormat"></use></svg>`;
-    this.addStatusBar({
-        element: indicator,
-    });
-    // indicator添加aria - label
-    indicator.setAttribute("aria-label", this.i18n.closeTips);
-    indicator.style.display = "none";
-
-    const style = document.createElement('style');
-    style.textContent = `
-            @keyframes blink {
-                0% { opacity: 1; }
-                50% { opacity: 0.2; }
-                100% { opacity: 1; }
-            }
-            .blink-animation {
-                animation: blink 1s infinite;
-            }
-        `;
-    document.head.appendChild(style);
-
-    indicator.addEventListener('click', () => {
-        this.toggleFormatPainter();
-    });
-}
-
-toggleFormatPainter() {
-    if (this.formatPainterEnable) {
-        fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
-        document.body.dataset.formatPainterEnable = "false";
-    } else {
-        fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
-        document.body.dataset.formatPainterEnable = "true";
-    }
-    this.formatPainterEnable = !this.formatPainterEnable;
-    const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
-    if (indicator) {
-        (indicator as HTMLElement).style.display = this.formatPainterEnable ? "flex" : "none";
     }
 }
 
 
-onLayoutReady() {
-    this.addDockBrushModeIndicator();
+async function addMemoBlock(protyle: IProtyle) {
+    // TODO: 选择是末尾添加还是添加到指定文档后面
+    // const DocumentId = protyle.block.id
+    const DocumentId = "20241118003530-etccqfd"
+    // 选中的文本添加下划线
+    // protyle.toolbar.setInlineMark(protyle, "u", "range");
+
+    // 添加脚注
+    document.execCommand('copy')
+    const selection= await navigator.clipboard.readText();
+    let back = await appendBlock("markdown",`
+>> ${selection}
+>> 
+> 
+> ${zeroWhite}
+`, DocumentId)
+    let newBlockId = back[0].doOperations[0].id
+
+    
+    const { x, y } = protyle.toolbar.range.getClientRects()[0]
+    let range = protyle.toolbar.range;
+
+    //
+    const str = ""
+    const textNode = document.createTextNode(str);
+    // 将范围的起始点和结束点都移动到选中文本的末尾
+    range.collapse(false);
+    protyle.toolbar.range.insertNode(textNode);
+    protyle.toolbar.range.setEndAfter(textNode);
+    protyle.toolbar.range.setStartBefore(textNode);
+
+    // 添加块引，同时添加上标样式
+    protyle.toolbar.setInlineMark(protyle, "block-ref sup", "range", {
+        type: "id",
+        color:`${newBlockId+zeroWhite+""+zeroWhite+"注"}`
+    });
+
+    // 关闭工具栏
+    protyle.toolbar.element.classList.add("fn__none")
+    // saveViaTransaction(memoELement)
+    addFloatLayer({
+        ids: [newBlockId],
+        defIds: [],
+        x: x,
+        y: y-70
+    });
 }
 
-onunload() {
-    console.log(this.i18n.byePlugin);
-}
-
-uninstall() {
-    console.log("uninstall");
-}
-
-
-}
+export function saveViaTransaction(protyleElem) {
+    let protyle:HTMLElement
+    if (protyleElem!=null){
+        protyle = protyleElem
+    }
+    if (protyle === null)
+        protyle = document.querySelector(".card__block.fn__flex-1.protyle:not(.fn__none) .protyle-wysiwyg.protyle-wysiwyg--attr")
+    if (protyle === null)
+        protyle = document.querySelector('.fn__flex-1.protyle:not(.fn__none) .protyle-wysiwyg.protyle-wysiwyg--attr') //需要获取到当前正在编辑的 protyle
+    let e = document.createEvent('HTMLEvents')
+    e.initEvent('input', true, false)
+    protyle.dispatchEvent(e)
+  }
