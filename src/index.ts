@@ -32,7 +32,7 @@ export default class PluginSample extends Plugin {
                     this.protyle = protyle.protyle;
 
                     if (!this.formatPainterEnable) {
-                        const selectedInfo = getSelectedParentHtml();
+                        const selectedInfo = this.getSelectedParentHtml();
                         if (selectedInfo) {
                             this.formatData = {
                                 datatype: selectedInfo.datatype,
@@ -202,41 +202,7 @@ export default class PluginSample extends Plugin {
                 }
             }
         });
-        function getSelectedParentHtml() {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                let selectedNode = range.startContainer;
-                const endNode = range.endContainer;
 
-                // 检查 endNode 的 previousSibling
-                if (endNode.previousSibling && endNode.previousSibling.nodeType === Node.ELEMENT_NODE) {
-                    const previousSibling = endNode.previousSibling;
-                    if (previousSibling.tagName.toLowerCase() === "span" && previousSibling.classList.contains("render-node")) {
-                        selectedNode = previousSibling;
-                    }
-                }
-
-                let parentElement = selectedNode.nodeType === Node.TEXT_NODE ? selectedNode.parentNode : selectedNode;
-                while (parentElement && !parentElement.hasAttribute("data-type")) {
-                    parentElement = parentElement.parentElement;
-                }
-
-                if (parentElement && parentElement.tagName.toLowerCase() === "span") {
-                    const result = {
-                        html: parentElement.outerHTML,
-                        datatype: parentElement.getAttribute("data-type"),
-                        style: parentElement.getAttribute("style")
-                    };
-                    // 清空选区
-                    selection.removeAllRanges();
-                    return result;
-                }
-            }
-            // 清空选区
-            selection.removeAllRanges();
-            return null;
-        }
 
         const hasClosestByAttribute = (element: Node, attr: string, value: string | null, top = false) => {
             if (!element) {
@@ -317,20 +283,54 @@ export default class PluginSample extends Plugin {
 
         console.log(this.i18n.helloPlugin);
     }
+    getSelectedParentHtml() {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            let selectedNode = range.startContainer;
+            const endNode = range.endContainer;
 
-    addDockBrushModeIndicator() {
-        const indicator = document.createElement("div");
-        indicator.classList.add("siyuan-plugin-formatPainter_brush_indicator", "status__counter", "toolbar__item", "ariaLabel", "blink-animation");
-        indicator.innerHTML = `<svg class="icon"><use xlink:href="#iconFormat"></use></svg>`;
-        this.addStatusBar({
-            element: indicator,
-        });
-        // indicator添加aria - label
-        indicator.setAttribute("aria-label", this.i18n.closeTips);
-        indicator.style.display = "none";
+            // 检查 endNode 的 previousSibling
+            if (endNode.previousSibling && endNode.previousSibling.nodeType === Node.ELEMENT_NODE) {
+                const previousSibling = endNode.previousSibling;
+                if (previousSibling.tagName.toLowerCase() === "span" && previousSibling.classList.contains("render-node")) {
+                    selectedNode = previousSibling;
+                }
+            }
 
-        const style = document.createElement('style');
-        style.textContent = `
+            let parentElement = selectedNode.nodeType === Node.TEXT_NODE ? selectedNode.parentNode : selectedNode;
+            while (parentElement && !parentElement.hasAttribute("data-type")) {
+                parentElement = parentElement.parentElement;
+            }
+
+            if (parentElement && parentElement.tagName.toLowerCase() === "span") {
+                const result = {
+                    html: parentElement.outerHTML,
+                    datatype: parentElement.getAttribute("data-type"),
+                    style: parentElement.getAttribute("style")
+                };
+                // 清空选区
+                selection.removeAllRanges();
+                return result;
+            }
+        }
+        // 清空选区
+        selection.removeAllRanges();
+        return null;
+}
+addDockBrushModeIndicator() {
+    const indicator = document.createElement("div");
+    indicator.classList.add("siyuan-plugin-formatPainter_brush_indicator", "status__counter", "toolbar__item", "ariaLabel", "blink-animation");
+    indicator.innerHTML = `<svg class="icon"><use xlink:href="#iconFormat"></use></svg>`;
+    this.addStatusBar({
+        element: indicator,
+    });
+    // indicator添加aria - label
+    indicator.setAttribute("aria-label", this.i18n.closeTips);
+    indicator.style.display = "none";
+
+    const style = document.createElement('style');
+    style.textContent = `
             @keyframes blink {
                 0% { opacity: 1; }
                 50% { opacity: 0.2; }
@@ -340,40 +340,40 @@ export default class PluginSample extends Plugin {
                 animation: blink 1s infinite;
             }
         `;
-        document.head.appendChild(style);
+    document.head.appendChild(style);
 
-        indicator.addEventListener('click', () => {
-            this.toggleFormatPainter();
-        });
+    indicator.addEventListener('click', () => {
+        this.toggleFormatPainter();
+    });
+}
+
+toggleFormatPainter() {
+    if (this.formatPainterEnable) {
+        fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
+        document.body.dataset.formatPainterEnable = "false";
+    } else {
+        fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
+        document.body.dataset.formatPainterEnable = "true";
     }
-
-    toggleFormatPainter() {
-        if (this.formatPainterEnable) {
-            fetchPost("/api/notification/pushMsg", { "msg": this.i18n.disable, "timeout": 7000 });
-            document.body.dataset.formatPainterEnable = "false";
-        } else {
-            fetchPost("/api/notification/pushMsg", { "msg": this.i18n.enable, "timeout": 7000 });
-            document.body.dataset.formatPainterEnable = "true";
-        }
-        this.formatPainterEnable = !this.formatPainterEnable;
-        const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
-        if (indicator) {
-            (indicator as HTMLElement).style.display = this.formatPainterEnable ? "flex" : "none";
-        }
+    this.formatPainterEnable = !this.formatPainterEnable;
+    const indicator = document.querySelector(".siyuan-plugin-formatPainter_brush_indicator");
+    if (indicator) {
+        (indicator as HTMLElement).style.display = this.formatPainterEnable ? "flex" : "none";
     }
+}
 
 
-    onLayoutReady() {
-        this.addDockBrushModeIndicator();
-    }
+onLayoutReady() {
+    this.addDockBrushModeIndicator();
+}
 
-    onunload() {
-        console.log(this.i18n.byePlugin);
-    }
+onunload() {
+    console.log(this.i18n.byePlugin);
+}
 
-    uninstall() {
-        console.log("uninstall");
-    }
+uninstall() {
+    console.log("uninstall");
+}
 
 
 }
