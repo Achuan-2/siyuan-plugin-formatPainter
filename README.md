@@ -8,13 +8,17 @@ Therefore, inspired by the format painter in Office, I developed this format pai
 
 ## ✨ Feature Introduction
 
-- Enter format painter mode: Select text and click the "Format Painter" button on the floating toolbar to copy the style (supports overlapping styles). Then, select other text to automatically and quickly apply the copied style.
+> The minimum required version of Siyuan Notes for this plugin is v3.1.12.
+
+- **Enter format painter mode**: Select text and click the "Format Painter" button on the floating toolbar to copy the style (supports overlapping styles). Then, select other text to automatically and quickly apply the copied style.
   - Supported inline styles for copying: font size, background color, text color, bold, inline code, keyboard style, underline, strikethrough, superscript, subscript, highlight, etc.
   - Supports copying **no style** to clear the selected text style
-- Exit format painter mode: Press the Esc key
+- **Exit format painter mode**: 
+  1. Press the `Esc` key
+  2. When the format painter is activated, a button is added to the right of the dock's bottom bar. The button's icon gradually flashes, and clicking the button allows you to exit the format painter mode.
 
-![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/思源笔记格式刷插件-2024-10-10.gif)
 
+![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/思源笔记格式刷插件-2024-11-19.gif)
 
 
 ## ❤️ Powered by Love
