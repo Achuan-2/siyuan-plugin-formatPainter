@@ -100,8 +100,12 @@ export default class PluginSample extends Plugin {
                         // Apply the stored format to the selected text
                         // 如果都为空
                         this.protyle.toolbar.setInlineMark(this.protyle, "clear", "range");
-                        // this.protyle.toolbar.setInlineMark(this.protyle, "text", "range");
                         if (!this.formatData) {
+                            // 移动光标到末尾
+                            this.protyle.toolbar.range.collapse(false); // false表示折叠到末尾
+
+                            // 工具栏关闭
+                            this.protyle.toolbar.element.classList.add("fn__none");
                             return;
                         }
                         if (this.formatData.datatype) {
@@ -166,8 +170,7 @@ export default class PluginSample extends Plugin {
                             }
                         }
 
-                        // console.log("Format applied to selected text");
-                        // 修改这部分:删除之前的collapse代码,改用以下代码设置光标位置
+                        // 移动光标到末尾
                         this.protyle.toolbar.range.collapse(false); // false表示折叠到末尾
                         
                         // 工具栏关闭
