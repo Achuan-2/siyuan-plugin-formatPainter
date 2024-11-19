@@ -167,19 +167,11 @@ export default class PluginSample extends Plugin {
                         }
 
                         // console.log("Format applied to selected text");
-                        // 清空选区
-                        selection.removeAllRanges();
-                        this.protyle.toolbar.range.collapse(true);
-                        // 选择所有具有 .protyle-toolbar 类的元素
-                        const toolbarElements = document.querySelectorAll('.protyle-toolbar');
-                        // 遍历选中的元素
-                        toolbarElements.forEach(element => {
-                            // 检查元素是否没有 .fn__none 类
-                            if (!element.classList.contains('fn__none')) {
-                                // 如果没有 .fn__none 类，则添加它
-                                element.classList.add('fn__none');
-                            }
-                        });
+                        // 修改这部分:删除之前的collapse代码,改用以下代码设置光标位置
+                        this.protyle.toolbar.range.collapse(false); // false表示折叠到末尾
+                        
+                        // 工具栏关闭
+                        this.protyle.toolbar.element.classList.add("fn__none");
 
                     }
                 }
@@ -188,6 +180,10 @@ export default class PluginSample extends Plugin {
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape") {
                 if (this.formatPainterEnable) {
+                    // 阻止事件冒泡和默认行为
+                    event.stopPropagation();
+                    event.preventDefault();
+                    
                     this.formatPainterEnable = false;
                     document.body.dataset.formatPainterEnable = "false";
                     this.formatData = null;
@@ -199,9 +195,12 @@ export default class PluginSample extends Plugin {
                         (indicator as HTMLElement).style.display = "none";
                     }
                     ///^ dock indicator worker
+
+                    // 确保取消所有选择
+                    window.getSelection()?.removeAllRanges();
                 }
             }
-        });
+        }, true); // 添加 true 参数使用事件捕获阶段
 
 
         const hasClosestByAttribute = (element: Node, attr: string, value: string | null, top = false) => {
