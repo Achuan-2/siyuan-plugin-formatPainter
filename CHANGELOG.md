@@ -1,54 +1,112 @@
 # Changelog
 
-## v1.1.6 / 2024.11.19
+## v0.3.5 2024-04-30
 
-- 🐛 修复进行无样式格式刷后，选择区域不会自动清除
-
-## v1.1.5 / 2024.11.19
-
-- 🐛 修复格式刷之后，按esc键不退出的格式刷模式的问题：
-  - 原因，没有处理事件冒泡，按esc键被思源内部的esc键事件（选中整个块）拦截了
-  - 解决方法：在`keydown`事件中，阻止事件冒泡，避免思源内部的esc键事件拦截
-
-## v1.1.4 / 2024.11.08
-
-- ✨ 更新思源笔记3.1.12的插件添加工具栏方法`updateProtyleToolbar`，避免不同插件添加工具栏相互覆盖。本插件的最低思源笔记版本要求以后为v3.1.12
-- 📝 优化英文文档
+* [Add `direction` to plugin method `Setting.addItem`](https://github.com/siyuan-note/siyuan/issues/11183)
 
 
+## 0.3.4 2024-02-20
 
-## v1.1.3 / 2024.10.20
-- ✨ 交互优化：选择无样式进行格式刷时，自动关闭悬浮工具栏
-- 💄启动格式刷时，信息提示用正常提示，不用报错提示
+* [Add plugin event bus `click-flashcard-action`](https://github.com/siyuan-note/siyuan/issues/10318)
 
-## v1.1.2 / 2024.10.12
-- ✨ 交互优化：打开格式刷模式的时候，弹窗提示如何关闭格式刷
-- ✨ 交互优化：右下角dock栏关闭格式刷按钮添加aria-label
+## 0.3.3 2024-01-24
 
-## v1.1.0 / 2024.10.12
-- 🐛 更改webpack.config.js，修复index.css和assets没有被打包的问题
+* Update dock icon class
+
+## 0.3.2 2024-01-09
+
+* [Add plugin `protyleOptions`](https://github.com/siyuan-note/siyuan/issues/10090)
+* [Add plugin api `uninstall`](https://github.com/siyuan-note/siyuan/issues/10063)
+* [Add plugin method `updateCards`](https://github.com/siyuan-note/siyuan/issues/10065)
+* [Add plugin function `lockScreen`](https://github.com/siyuan-note/siyuan/issues/10063)
+* [Add plugin event bus `lock-screen`](https://github.com/siyuan-note/siyuan/pull/9967)
+* [Add plugin event bus `open-menu-inbox`](https://github.com/siyuan-note/siyuan/pull/9967)
 
 
-## v1.0.9 / 2024.10.11
-- ✨当格式刷启动时候，dock底栏最右侧添加一个按钮，按钮图案渐变闪烁，点击该按钮可以退出格式刷模式（[pull request](https://github.com/Achuan-2/siyuan-plugin-formatPainter/pull/1)）
+## 0.3.1 2023-12-06
 
-## v1.0.8 / 2024.10.11
-- ✨排除对超链接、块引的格式刷
-- ✨支持公式的格式刷
+* [Support `Dock Plugin` and `Command Palette` on mobile](https://github.com/siyuan-note/siyuan/issues/9926)
 
-## v1.0.5 / 2024.10.10 
-- ✨支持镂空和投影样式
+## 0.3.0 2023-12-05
 
-## v1.0.4 / 2024.10.10 
-- ✨更改逻辑，添加样式前，先清除所有样式
-- ✨启动格式刷更改鼠标光标
-- ✨启动格式刷自动关闭工具栏
-## v1.0.3 / 2024.10.10
-- 📝 完善README
-## v1.0.2 / 2024.10.10 
-- ✨支持格式刷字体大小
+* Upgrade Siyuan to 0.9.0
+* Support more platforms
 
-## v1.0.0 / 2024.10.10 🎉 第一次提交
-- ✨支持格式刷功能
-- 🐛 已知bug：不支持数学公式格式刷
+## 0.2.9 2023-11-28
 
+* [Add plugin method `openMobileFileById`](https://github.com/siyuan-note/siyuan/issues/9738)
+
+
+## 0.2.8 2023-11-15
+
+* [`resize` cannot be triggered after dragging to unpin the dock](https://github.com/siyuan-note/siyuan/issues/9640)
+
+## 0.2.7 2023-10-31
+
+* [Export `Constants` to plugin](https://github.com/siyuan-note/siyuan/issues/9555)
+* [Add plugin `app.appId`](https://github.com/siyuan-note/siyuan/issues/9538)
+* [Add plugin event bus `switch-protyle`](https://github.com/siyuan-note/siyuan/issues/9454)
+
+## 0.2.6 2023-10-24
+
+* [Deprecated `loaded-protyle` use `loaded-protyle-static` instead](https://github.com/siyuan-note/siyuan/issues/9468)
+
+## 0.2.5 2023-10-10
+
+* [Add plugin event bus `open-menu-doctree`](https://github.com/siyuan-note/siyuan/issues/9351)
+
+## 0.2.4 2023-09-19
+
+* Supports use in windows
+* [Add plugin function `transaction`](https://github.com/siyuan-note/siyuan/issues/9172)
+
+## 0.2.3 2023-09-05
+
+* [Add plugin function `transaction`](https://github.com/siyuan-note/siyuan/issues/9172)
+* [Plugin API add openWindow and command.globalCallback](https://github.com/siyuan-note/siyuan/issues/9032)
+
+## 0.2.2 2023-08-29
+
+* [Add plugin event bus `destroy-protyle`](https://github.com/siyuan-note/siyuan/issues/9033)
+* [Add plugin event bus `loaded-protyle-dynamic`](https://github.com/siyuan-note/siyuan/issues/9021)
+
+## 0.2.1 2023-08-21
+
+* [Plugin API add getOpenedTab method](https://github.com/siyuan-note/siyuan/issues/9002)
+* [Plugin API custom.fn => custom.id in openTab](https://github.com/siyuan-note/siyuan/issues/8944)
+
+## 0.2.0 2023-08-15
+
+* [Add plugin event bus `open-siyuan-url-plugin` and `open-siyuan-url-block`](https://github.com/siyuan-note/siyuan/pull/8927)
+
+
+## 0.1.12 2023-08-01
+
+* Upgrade siyuan to 0.7.9
+
+## 0.1.11
+
+* [Add `input-search` event bus to plugins](https://github.com/siyuan-note/siyuan/issues/8725)
+
+
+## 0.1.10
+
+* [Add `bind this` example for eventBus in plugins](https://github.com/siyuan-note/siyuan/issues/8668)
+* [Add `open-menu-breadcrumbmore` event bus to plugins](https://github.com/siyuan-note/siyuan/issues/8666)
+
+## 0.1.9
+
+* [Add `open-menu-xxx` event bus for plugins ](https://github.com/siyuan-note/siyuan/issues/8617)
+
+## 0.1.8
+
+* [Add protyleSlash to the plugin](https://github.com/siyuan-note/siyuan/issues/8599)
+* [Add plugin API protyle](https://github.com/siyuan-note/siyuan/issues/8445)
+
+## 0.1.7
+
+* [Support build js and json](https://github.com/siyuan-note/plugin-sample/pull/8)
+
+## 0.1.6
+
+* add `fetchPost` example

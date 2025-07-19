@@ -5,7 +5,6 @@ cd "$(dirname $0)"
 version=v$(grep -oP '(?<="version": ")[^"]+' plugin.json) 
 
 # Commit changes
-git pull
 git add .
 git commit -m "🔖 $version" 
 git push
@@ -25,7 +24,3 @@ git tag $version # Create a tag
 # 推送新的 tag 到远程仓库
 git push origin --tags 
 # git archive --format zip --output ../package-$version.zip HEAD # Create a zip archive
-
-
-
-

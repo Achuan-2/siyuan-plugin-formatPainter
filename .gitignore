@@ -1,13 +1,11 @@
 .idea
-node_modules
+.vscode
 .DS_Store
-.eslintcache
-/dist
-package.zip
-/index.css
-/index.js
-/i18n
-# release.sh
-/assets
-#pnpm
 pnpm-lock.yaml
+package-lock.json
+package.zip
+node_modules
+dev
+dist
+build
+tmp
