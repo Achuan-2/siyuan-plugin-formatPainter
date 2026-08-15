@@ -4,5 +4,22 @@
     "tips": "Format Painter ",
     "enable": "Format Painter is enabled, press [Esc key] or [dock bar button in the lower right corner] to exit the Format Painter mode",
     "disable": "Format Painter is disabled",
-    "closeTips": "Disable Format Painter"
+    "closeTips": "Disable Format Painter",
+    "inlinePainter": "Inline Format Painter",
+    "headingPainter": "Heading Format Painter",
+    "blockPainter": "Block Style Format Painter",
+    "savePreset": "Save Current Style as Preset",
+    "activePainterFormat": "Currently Active Format",
+    "usePreset": "Use Preset",
+    "deletePreset": "Delete Preset",
+    "noPresets": "No Presets",
+    "presetName": "Preset Name",
+    "presetSaved": "Format Painter preset saved",
+    "presetDeleted": "Format Painter preset deleted",
+    "confirmDeletePreset": "Delete this preset?",
+    "selectInlineSource": "Select some text before choosing Inline Format Painter",
+    "selectHeadingSource": "Place the cursor in a block before choosing Heading Format Painter",
+    "selectBlockSource": "Place the cursor in a block before choosing Block Style Format Painter",
+    "headingTargetInvalid": "Heading format can only be applied to paragraph or heading blocks",
+    "applyFailed": "Failed to apply the format. Open Developer Tools for details"
 }

@@ -8,10 +8,14 @@ Therefore, inspired by the format painter in Office, I developed this format pai
 
 ## ✨ Feature Introduction
 
-> The minimum required version of Siyuan Notes for this plugin is v3.1.12.
+> This plugin supports SiYuan Note v3.1.12 or later. SiYuan v3.8.0 and later use the native inline format painter when available; earlier versions automatically use the compatibility implementation.
 
-- **Enter format painter mode**: Select text and click the "Format Painter" button on the floating toolbar to copy the style (supports overlapping styles). Then, select other text to automatically and quickly apply the copied style.
-  - Supported inline styles for copying: font size, background color, text color, bold, inline code, keyboard style, underline, strikethrough, superscript, subscript, highlight, etc.
+- **Enter format painter mode**: Select text, click the brush icon on the floating toolbar, and choose a painter type from the SiYuan menu:
+  - **Inline Format Painter** copies font size, colors, bold, inline code, keyboard style, underline, strikethrough, superscript, subscript, highlight, and other inline styles.
+  - **Heading Format Painter** copies a heading level from a heading, or converts headings back to paragraphs when sampled from a paragraph.
+  - **Block Style Painter** copies only the block background and text colors without changing other styles, custom attributes, content, or type.
+  - All three modes can be applied continuously to multiple targets.
+  - Presets apply immediately to the current selection or block and remain active for painting additional targets.
   - Supports copying **no style** to clear the selected text style
 - **Exit format painter mode**: 
   1. Press the `Esc` key

@@ -4,5 +4,22 @@
     "tips": "格式刷",
     "enable": "格式刷已启用，按【Esc键】或者【右下角dock栏按钮】退出格式刷模式",
     "disable": "格式刷已关闭",
-    "closeTips": "关闭格式刷"
+    "closeTips": "关闭格式刷",
+    "inlinePainter": "行级格式刷",
+    "headingPainter": "标题格式刷",
+    "blockPainter": "块样式格式刷",
+    "savePreset": "保存当前样式为预设",
+    "activePainterFormat": "当前已启用的格式",
+    "usePreset": "使用预设",
+    "deletePreset": "删除预设",
+    "noPresets": "暂无预设",
+    "presetName": "预设名称",
+    "presetSaved": "格式刷预设已保存",
+    "presetDeleted": "格式刷预设已删除",
+    "confirmDeletePreset": "确定删除预设",
+    "selectInlineSource": "请先选中一段文字，再选择行级格式刷",
+    "selectHeadingSource": "请将光标置于一个块中，再选择标题格式刷",
+    "selectBlockSource": "请将光标置于一个块中，再选择块样式格式刷",
+    "headingTargetInvalid": "标题格式只能应用到段落或标题块",
+    "applyFailed": "格式应用失败，请打开开发者工具查看详情"
 }

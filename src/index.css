@@ -1,7 +1,3 @@
 body[data-format-painter-enable="true"] .protyle-wysiwyg {
-  cursor: url("plugins/siyuan-plugin-formatPainter/assets/formatPainter_mouse2.png"), auto;
-}
-
-body[data-format-painter-enable="false"] .protyle-wysiwyg {
-  cursor: auto;
+  cursor: url("./assets/formatPainter_mouse2.png"), auto;
 }
