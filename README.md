@@ -25,8 +25,8 @@ Therefore, inspired by the format painter in Office, I developed this format pai
 ![](https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/思源笔记格式刷插件-2024-11-19.gif)
 
 
-## ❤️ Powered by Love
+## ❤️ Tips Are Welcome
 
-A poor graduate student in the process of studying. If you like my plugin, feel free to buy me a pack of spicy strips. This will motivate me to continue improving this plugin and developing new ones.
+If you find this plugin useful, you're welcome to leave a tip or give the repository a star on GitHub. Your support helps me maintain and improve this plugin and develop new ones. Thank you for your support!
 
-![](https://cdn.nlark.com/yuque/0/2024/jpeg/1408046/1714754573393-9c7f70b0-05ec-489e-b5a2-1a37fb681f6f.jpeg?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_592%2Climit_0%2Finterlace%2C1)
+[Leave a tip](https://pancake.waffo.ai/store/achuan-2-fdbho4ye/product/PROD_3F7Aa7c2NQlz9KmxcgxjQ7?type=onetime&currency=USD)

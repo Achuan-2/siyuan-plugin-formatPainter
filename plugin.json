@@ -2,7 +2,7 @@
   "name": "siyuan-plugin-formatPainter",
   "author": "Achuan-2",
   "url": "https://github.com/Achuan-2/siyuan-plugin-formatPainter",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "minAppVersion": "3.1.12",
   "backends": [
     "windows",
@@ -34,7 +34,8 @@
     "patreon": "",
     "github": "",
     "custom": [
-      "https://www.yuque.com/achuan-2"
+        "https://pancake.waffo.ai/store/achuan-2-fdbho4ye/product/PROD_3F7Aa7c2NQlz9KmxcgxjQ7?type=onetime&currency=USD",
+        "https://fastly.jsdelivr.net/gh/Achuan-2/PicBed/assets/20241128221208-2024-11-28.png"
     ]
   },
   "keywords": [
